@@ -75,7 +75,7 @@ export default function ChessBoard({
 
   const checkedKing = kingSquare();
 
-  const rows = isFlipped ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
+  const rows = isFlipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
   const cols = isFlipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
 
   return (
@@ -84,7 +84,7 @@ export default function ChessBoard({
         <div key={row} className="flex">
           {/* Rank label */}
           <div className="w-6 flex items-center justify-center text-xs text-text-secondary bg-bg select-none">
-            {isFlipped ? row + 1 : 8 - row}
+            {8 - row}
           </div>
           {cols.map((col) => {
             const piece = board[row][col];
