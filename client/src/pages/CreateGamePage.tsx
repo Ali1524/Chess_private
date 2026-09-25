@@ -39,14 +39,21 @@ export default function CreateGamePage() {
       }
     };
 
+    const onConnectError = () => {
+      setError("Unable to connect to the game server. Set VITE_SOCKET_URL to your deployed backend URL.");
+      setPageState("error");
+    };
+
     s.on("room:created", onRoomCreated);
     s.on("room:error", onRoomError);
     s.on("game:state", onGameState);
+    s.on("connect_error", onConnectError);
 
     return () => {
       s.off("room:created", onRoomCreated);
       s.off("room:error", onRoomError);
       s.off("game:state", onGameState);
+      s.off("connect_error", onConnectError);
     };
   }, [navigate, displayName]);
 

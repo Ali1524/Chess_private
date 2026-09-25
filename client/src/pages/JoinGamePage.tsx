@@ -39,12 +39,19 @@ export default function JoinGamePage() {
       setJoining(false);
     };
 
+    const onConnectError = () => {
+      setError("Unable to connect to the game server. Set VITE_SOCKET_URL to your deployed backend URL.");
+      setJoining(false);
+    };
+
     s.on("room:joined", onRoomJoined);
     s.on("room:error", onRoomError);
+    s.on("connect_error", onConnectError);
 
     return () => {
       s.off("room:joined", onRoomJoined);
       s.off("room:error", onRoomError);
+      s.off("connect_error", onConnectError);
     };
   }, [navigate]);
 

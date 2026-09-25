@@ -2,7 +2,12 @@ import helmet from "helmet";
 import cors from "cors";
 import type { Application } from "express";
 
-const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
+const CLIENT_URLS = (process.env.CLIENT_URL ?? "http://localhost:5173")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const DEFAULT_CLIENT_URL = CLIENT_URLS[0] ?? "http://localhost:5173";
 
 export function applySecurityMiddleware(app: Application): void {
   // Helmet security headers
@@ -11,17 +16,34 @@ export function applySecurityMiddleware(app: Application): void {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          connectSrc: ["'self'", CLIENT_URL],
+          connectSrc: ["'self'", ...CLIENT_URLS],
         },
       },
       crossOriginEmbedderPolicy: false,
     })
   );
 
-  // CORS - only allow configured origin
+  // CORS - allow the configured frontend origins, including Vercel previews and localhost
   app.use(
     cors({
-      origin: CLIENT_URL,
+      origin: (origin, callback) => {
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        if (CLIENT_URLS.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+
+        if (origin.includes(".vercel.app") || origin.includes("localhost") || origin.includes("127.0.0.1")) {
+          callback(null, true);
+          return;
+        }
+
+        callback(new Error("Not allowed by CORS"));
+      },
       methods: ["GET", "POST"],
       credentials: true,
     })
@@ -42,5 +64,5 @@ export function applySecurityMiddleware(app: Application): void {
 }
 
 export function getCorsOrigin(): string {
-  return CLIENT_URL;
+  return DEFAULT_CLIENT_URL;
 }
