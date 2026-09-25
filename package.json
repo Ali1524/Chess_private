@@ -1,0 +1,20 @@
+{
+  "name": "private-chess",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"SERVER,CLIENT\" --prefix-colors \"cyan,magenta\" \"npm run dev --workspace=server\" \"npm run dev --workspace=client\"",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "typecheck": "npm run typecheck --workspace=server && npm run typecheck --workspace=client",
+    "lint": "npm run lint --workspace=server && npm run lint --workspace=client",
+    "test": "npm run test --workspace=server",
+    "install:all": "npm install && npm install --workspace=server && npm install --workspace=client"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
